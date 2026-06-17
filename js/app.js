@@ -10,6 +10,11 @@ let saveTimer = null;
 
 const AVATARS = ["🦊","🐯","🦁","🐼","🐸","🦄","🐙","🦅","🐳","🐲"];
 
+// Nombre d'éléments (questions / histoires) par visite d'une île, avant
+// de proposer de retourner à la carte. Évite les sessions sans fin.
+const SESSION_LENGTH = 8;
+const READING_SESSION_LENGTH = 4;
+
 function scheduleSave() {
   clearTimeout(saveTimer);
   saveTimer = setTimeout(() => Storage.save(state), 400);
@@ -153,9 +158,13 @@ function openIsland(islandId) {
 let exCurrentIsland = null;
 let exCurrentItem = null;
 let exAnswered = false;
+let exSessionCount = 0;
+let exSessionCorrect = 0;
 
 function startExercise(islandId) {
   exCurrentIsland = islandId;
+  exSessionCount = 0;
+  exSessionCorrect = 0;
   const island = GAME_DATA.islands.find(i => i.id === islandId);
   document.getElementById("exIslandBanner").textContent = `${island.emoji} ${island.name}`;
   document.getElementById("exIslandBanner").style.background =
@@ -166,12 +175,13 @@ function startExercise(islandId) {
 
 function loadExercise() {
   exAnswered = false;
+  exSessionCount++;
   const progress = state.islandProgress[exCurrentIsland];
   const item = Adaptive.pickExercise(exCurrentIsland, progress.level);
   exCurrentItem = item;
 
   document.getElementById("exLevelTag").textContent = `Niveau ${progress.level}`;
-  document.getElementById("exProgressFill").style.width = `${(progress.level / 3) * 100}%`;
+  document.getElementById("exProgressFill").style.width = `${Math.min(100, (exSessionCount / SESSION_LENGTH) * 100)}%`;
   document.getElementById("exQuestion").textContent = item.question || "Comment se lit ce mot ?";
   document.getElementById("exWord").textContent = item.word;
 
@@ -189,6 +199,8 @@ function loadExercise() {
 
   document.getElementById("exFeedback").className = "feedback-box";
   document.getElementById("exNextBtn").className = "btn-primary btn-next";
+  document.getElementById("exNextBtn").textContent =
+    exSessionCount >= SESSION_LENGTH ? "Terminer 🏁" : "Suivant ➜";
 }
 
 document.getElementById("exSpeakBtn").addEventListener("click", () => {
@@ -198,31 +210,43 @@ document.getElementById("exSpeakBtn").addEventListener("click", () => {
 function answerExercise(btn, isCorrect) {
   if (exAnswered) return;
   exAnswered = true;
+  if (isCorrect) exSessionCorrect++;
   finalizeAnswer(isCorrect, exCurrentIsland, btn, "exFeedback", "exNextBtn", ".choices-grid .choice-btn");
 }
 
-document.getElementById("exNextBtn").addEventListener("click", loadExercise);
+document.getElementById("exNextBtn").addEventListener("click", () => {
+  if (exSessionCount >= SESSION_LENGTH) {
+    endIslandSession(exCurrentIsland, exSessionCorrect, SESSION_LENGTH);
+  } else {
+    loadExercise();
+  }
+});
 
 /* ----------------------------------------------------------
    ATELIER D'ÉCRITURE (lettre manquante)
 ---------------------------------------------------------- */
 let atCurrentItem = null;
 let atAnswered = false;
+let atSessionCount = 0;
+let atSessionCorrect = 0;
 const LETTER_POOL = "ABCDEFGHIJLMNOPRSTUV".split("");
 
 function startAtelier() {
+  atSessionCount = 0;
+  atSessionCorrect = 0;
   showScreen("atelier");
   loadAtelier();
 }
 
 function loadAtelier() {
   atAnswered = false;
+  atSessionCount++;
   const progress = state.islandProgress.atelier;
   const item = Adaptive.pickExercise("atelier", progress.level);
   atCurrentItem = item;
 
   document.getElementById("atLevelTag").textContent = `Niveau ${progress.level}`;
-  document.getElementById("atProgressFill").style.width = `${(progress.level / 3) * 100}%`;
+  document.getElementById("atProgressFill").style.width = `${Math.min(100, (atSessionCount / SESSION_LENGTH) * 100)}%`;
   document.getElementById("atWord").textContent = item.display;
 
   const distractors = shuffle(LETTER_POOL.filter(l => l !== item.missing)).slice(0, 3);
@@ -241,6 +265,8 @@ function loadAtelier() {
 
   document.getElementById("atFeedback").className = "feedback-box";
   document.getElementById("atNextBtn").className = "btn-primary btn-next";
+  document.getElementById("atNextBtn").textContent =
+    atSessionCount >= SESSION_LENGTH ? "Terminer 🏁" : "Suivant ➜";
 }
 
 document.getElementById("atSpeakBtn").addEventListener("click", () => {
@@ -250,10 +276,17 @@ document.getElementById("atSpeakBtn").addEventListener("click", () => {
 function answerAtelier(btn, isCorrect) {
   if (atAnswered) return;
   atAnswered = true;
+  if (isCorrect) atSessionCorrect++;
   finalizeAnswer(isCorrect, "atelier", btn, "atFeedback", "atNextBtn", ".letter-grid .letter-btn");
 }
 
-document.getElementById("atNextBtn").addEventListener("click", loadAtelier);
+document.getElementById("atNextBtn").addEventListener("click", () => {
+  if (atSessionCount >= SESSION_LENGTH) {
+    endIslandSession("atelier", atSessionCorrect, SESSION_LENGTH);
+  } else {
+    loadAtelier();
+  }
+});
 
 /* ----------------------------------------------------------
    TOUR DE LA CONCENTRATION (intrus)
@@ -262,20 +295,25 @@ let ccAnswered = false;
 let ccStartTime = null;
 let ccTimerInterval = null;
 let ccCurrentItem = null;
+let ccSessionCount = 0;
+let ccSessionCorrect = 0;
 
 function startConcentration() {
+  ccSessionCount = 0;
+  ccSessionCorrect = 0;
   showScreen("concentration");
   loadConcentration();
 }
 
 function loadConcentration() {
   ccAnswered = false;
+  ccSessionCount++;
   const progress = state.islandProgress.concentration;
   const pool = GAME_DATA.attentionGames[progress.level];
   const chosen = pool[Math.floor(Math.random() * pool.length)];
   ccCurrentItem = chosen;
 
-  document.getElementById("ccProgressFill").style.width = `${(progress.level / 3) * 100}%`;
+  document.getElementById("ccProgressFill").style.width = `${Math.min(100, (ccSessionCount / SESSION_LENGTH) * 100)}%`;
 
   const grid = document.getElementById("ccGrid");
   grid.innerHTML = "";
@@ -290,6 +328,8 @@ function loadConcentration() {
 
   document.getElementById("ccFeedback").className = "feedback-box";
   document.getElementById("ccNextBtn").className = "btn-primary btn-next";
+  document.getElementById("ccNextBtn").textContent =
+    ccSessionCount >= SESSION_LENGTH ? "Terminer 🏁" : "Suivant ➜";
 
   ccStartTime = performance.now();
   clearInterval(ccTimerInterval);
@@ -305,11 +345,18 @@ function answerConcentration(btn, isCorrect) {
   clearInterval(ccTimerInterval);
   if (isCorrect) {
     state.oddFoundCount = (state.oddFoundCount || 0) + 1;
+    ccSessionCorrect++;
   }
   finalizeAnswer(isCorrect, "concentration", btn, "ccFeedback", "ccNextBtn", ".intruder-grid .intruder-cell");
 }
 
-document.getElementById("ccNextBtn").addEventListener("click", loadConcentration);
+document.getElementById("ccNextBtn").addEventListener("click", () => {
+  if (ccSessionCount >= SESSION_LENGTH) {
+    endIslandSession("concentration", ccSessionCorrect, SESSION_LENGTH);
+  } else {
+    loadConcentration();
+  }
+});
 
 /* ---- Minuteur magique (outil de pause, non scoré) ---- */
 const focusModal = document.getElementById("focusTimerModal");
@@ -355,8 +402,10 @@ document.getElementById("focusResetBtn").addEventListener("click", () => {
 let phWords = [];
 let phSelfTimerInterval = null;
 let phSelfSeconds = 0;
+let phSessionCount = 0;
 
 function startPhare() {
+  phSessionCount = 0;
   showScreen("phare");
   loadPhare();
 }
@@ -366,13 +415,14 @@ function loadPhare() {
   document.getElementById("phSelfTimer").style.display = "none";
   clearInterval(phSelfTimerInterval);
   phSelfSeconds = 0;
+  phSessionCount++;
 
   const progress = state.islandProgress.phare;
   const pool = GAME_DATA.readingTexts[progress.level];
   const text = pool[Math.floor(Math.random() * pool.length)];
   phWords = text.split(" ");
 
-  document.getElementById("phProgressFill").style.width = `${(progress.level / 3) * 100}%`;
+  document.getElementById("phProgressFill").style.width = `${Math.min(100, (phSessionCount / READING_SESSION_LENGTH) * 100)}%`;
 
   const container = document.getElementById("phText");
   container.innerHTML = phWords
@@ -382,6 +432,8 @@ function loadPhare() {
 
   document.getElementById("phFeedback").className = "feedback-box";
   document.getElementById("phNextBtn").className = "btn-primary btn-next";
+  document.getElementById("phNextBtn").textContent =
+    phSessionCount >= READING_SESSION_LENGTH ? "Terminer 🏁" : "Histoire suivante ➜";
 }
 
 document.getElementById("phPlayBtn").addEventListener("click", () => {
@@ -448,7 +500,13 @@ function finishReadingText() {
   scheduleSave();
 }
 
-document.getElementById("phNextBtn").addEventListener("click", loadPhare);
+document.getElementById("phNextBtn").addEventListener("click", () => {
+  if (phSessionCount >= READING_SESSION_LENGTH) {
+    endIslandSession("phare");
+  } else {
+    loadPhare();
+  }
+});
 
 /* ----------------------------------------------------------
    LOGIQUE COMMUNE DE CORRECTION
@@ -708,6 +766,20 @@ function renderParents() {
       <div class="conseil-text-p">Les badges et niveaux sont là pour valoriser les efforts, pas seulement la performance. Un passage de niveau, même après des hésitations, est une vraie victoire à souligner.</div></div>
     </div>
   `;
+}
+
+/* ----------------------------------------------------------
+   FIN DE SESSION (retour à la carte après N éléments)
+---------------------------------------------------------- */
+function endIslandSession(islandId, correctCount, totalCount) {
+  const island = GAME_DATA.islands.find(i => i.id === islandId);
+  const label = island ? `${island.emoji} ${island.name}` : "Cette étape";
+  const text = (typeof correctCount === "number" && typeof totalCount === "number")
+    ? `${label} : ${correctCount}/${totalCount} bonnes réponses cette fois-ci. Reviens quand tu veux pour continuer l'aventure !`
+    : `${label} terminé pour cette fois. Reviens quand tu veux pour continuer l'aventure !`;
+  showScreen("map");
+  updateTopbar();
+  triggerCelebration("🏁", "Étape terminée !", text);
 }
 
 /* ----------------------------------------------------------
