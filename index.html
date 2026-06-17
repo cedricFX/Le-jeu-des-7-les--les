@@ -179,6 +179,18 @@
         <input type="file" id="importFile" accept=".json" style="display:none;">
       </div>
       <p class="data-hint">Ce jeu fonctionne sans connexion : la progression reste sur cet appareil. Pour la retrouver sur un autre ordinateur ou téléphone, exporte-la puis importe le fichier sur l'autre appareil.</p>
+
+      <h3 class="subsection-h">☁️ Sauvegarde en ligne (Google Sheets)</h3>
+      <p class="data-hint">Configure une fois l'adresse de ton script Google (voir GOOGLE_SHEETS_SETUP.md), puis sauvegarde ou récupère la progression depuis n'importe quel appareil.</p>
+      <div class="cloud-config-row">
+        <input type="text" id="cloudUrlInput" placeholder="Colle ici l'URL de ton Apps Script…">
+        <button class="btn-secondary" id="cloudSaveUrlBtn" title="Enregistrer l'adresse">💾</button>
+      </div>
+      <div class="data-actions">
+        <button class="btn-secondary" id="cloudSaveBtn">☁️⬆️ Sauvegarder en ligne</button>
+        <button class="btn-secondary" id="cloudLoadBtn">☁️⬇️ Charger depuis le cloud</button>
+      </div>
+      <p class="cloud-status" id="cloudStatus"></p>
     </section>
 
     <!-- ============ GUIDE PARENTS ============ -->
@@ -228,6 +240,7 @@
 <script src="js/storage.js"></script>
 <script src="js/speech.js"></script>
 <script src="js/adaptive.js"></script>
+<script src="js/cloudsync.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>
