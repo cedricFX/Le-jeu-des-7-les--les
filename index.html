@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L'Archipel des Lettres — L'aventure de lecture de Juliann</title>
+<meta name="description" content="Un jeu d'aventure pour aider les enfants dyslexiques et dysorthographiques à progresser en lecture, en s'amusant.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ============ ÉCRAN D'ACCUEIL / CRÉATION DE PROFIL ============ -->
+<section id="screen-onboarding" class="screen active">
+  <div class="onboarding-card">
+    <div class="onboarding-emoji">🗺️</div>
+    <h1 class="onboarding-title">L'Archipel des Lettres</h1>
+    <p class="onboarding-sub">Une île, un capitaine, une grande aventure de lecture !</p>
+
+    <label class="ob-label">Comment t'appelles-tu, capitaine ?</label>
+    <input id="nameInput" class="ob-input" type="text" maxlength="20" placeholder="Ton prénom">
+
+    <label class="ob-label">Choisis ton compagnon de voyage</label>
+    <div class="avatar-grid" id="avatarGrid"></div>
+
+    <button class="btn-primary" id="startGameBtn">⚓ Embarquer pour l'aventure !</button>
+
+    <button class="btn-link" id="showImportOnboarding">J'ai déjà une progression à importer</button>
+  </div>
+</section>
+
+<!-- ============ APP SHELL (visible après onboarding) ============ -->
+<div id="appShell" class="app-shell">
+
+  <header class="topbar">
+    <div class="topbar-player">
+      <span class="topbar-avatar" id="topAvatar">🦊</span>
+      <span class="topbar-name" id="topName">Capitaine</span>
+    </div>
+    <div class="topbar-stats">
+      <span class="chip chip-star">⭐ <span id="topStars">0</span></span>
+      <span class="chip chip-streak">🔥 <span id="topStreak">0</span></span>
+    </div>
+  </header>
+
+  <main class="main-area">
+
+    <!-- ============ CARTE DE L'ARCHIPEL ============ -->
+    <section id="screen-map" class="screen">
+      <div class="map-intro">
+        <p id="mapGreeting">Bienvenue à bord !</p>
+      </div>
+      <div class="islands-grid" id="islandsGrid"></div>
+    </section>
+
+    <!-- ============ EXERCICE GÉNÉRIQUE (choix multiple) ============ -->
+    <section id="screen-exercise" class="screen">
+      <button class="btn-back" data-target="map">← Retour à la carte</button>
+      <div class="island-banner" id="exIslandBanner"></div>
+
+      <div class="progress-track">
+        <div class="progress-fill" id="exProgressFill"></div>
+      </div>
+
+      <div class="exercise-card">
+        <div class="ex-level-tag" id="exLevelTag">Niveau 1</div>
+        <p class="ex-question" id="exQuestion">Comment se lit ce mot ?</p>
+
+        <div class="word-display-row">
+          <span class="word-display" id="exWord">—</span>
+          <button class="btn-speak" id="exSpeakBtn" title="Écouter">🔊</button>
+        </div>
+
+        <div class="choices-grid" id="exChoices"></div>
+
+        <div class="feedback-box" id="exFeedback"></div>
+        <button class="btn-primary btn-next" id="exNextBtn">Suivant ➜</button>
+      </div>
+    </section>
+
+    <!-- ============ ATELIER D'ÉCRITURE (lettre manquante) ============ -->
+    <section id="screen-atelier" class="screen">
+      <button class="btn-back" data-target="map">← Retour à la carte</button>
+      <div class="island-banner banner-atelier">✍️ Atelier d'Écriture</div>
+
+      <div class="progress-track">
+        <div class="progress-fill" id="atProgressFill"></div>
+      </div>
+
+      <div class="exercise-card">
+        <div class="ex-level-tag" id="atLevelTag">Niveau 1</div>
+        <p class="ex-question">Quelle lettre manque-t-il dans ce mot ?</p>
+
+        <div class="word-display-row">
+          <span class="word-display gapword" id="atWord">—</span>
+          <button class="btn-speak" id="atSpeakBtn" title="Écouter le mot complet">🔊</button>
+        </div>
+
+        <div class="letter-grid" id="atChoices"></div>
+
+        <div class="feedback-box" id="atFeedback"></div>
+        <button class="btn-primary btn-next" id="atNextBtn">Suivant ➜</button>
+      </div>
+    </section>
+
+    <!-- ============ TOUR DE LA CONCENTRATION (intrus) ============ -->
+    <section id="screen-concentration" class="screen">
+      <button class="btn-back" data-target="map">← Retour à la carte</button>
+      <div class="island-banner banner-concentration">🦉 Tour de la Concentration</div>
+
+      <p class="concentration-instructions">Trouve l'intrus caché dans la grille, le plus vite possible !</p>
+
+      <div class="progress-track">
+        <div class="progress-fill" id="ccProgressFill"></div>
+      </div>
+
+      <div class="concentration-timer" id="ccTimer">⏱️ 0.0s</div>
+
+      <div class="intruder-grid" id="ccGrid"></div>
+
+      <div class="feedback-box" id="ccFeedback"></div>
+      <button class="btn-primary btn-next" id="ccNextBtn">Suivant ➜</button>
+
+      <div class="focus-tool-card">
+        <div class="focus-tool-title">🧘 Besoin d'une pause concentration ?</div>
+        <p class="focus-tool-text">Utilise le minuteur magique pour faire une pause de 5 minutes pendant tes devoirs.</p>
+        <button class="btn-secondary" id="openFocusTimer">Ouvrir le minuteur magique</button>
+      </div>
+    </section>
+
+    <!-- ============ PHARE DES HISTOIRES (lecture) ============ -->
+    <section id="screen-phare" class="screen">
+      <button class="btn-back" data-target="map">← Retour à la carte</button>
+      <div class="island-banner banner-phare">📖 Phare des Histoires</div>
+
+      <div class="progress-track">
+        <div class="progress-fill" id="phProgressFill"></div>
+      </div>
+
+      <div class="reading-controls">
+        <button class="btn-primary" id="phPlayBtn">🔊 Lire à voix haute</button>
+        <button class="btn-secondary" id="phStopBtn">⏹ Stop</button>
+        <button class="btn-secondary" id="phMeReadBtn">🎤 Je lis moi-même</button>
+      </div>
+
+      <div class="reading-card" id="phText"></div>
+
+      <div class="reading-self-timer" id="phSelfTimer" style="display:none;">
+        <div class="timer-big" id="phTimerDisplay">00:00</div>
+        <button class="btn-primary" id="phFinishedBtn">J'ai fini de lire !</button>
+      </div>
+
+      <div class="feedback-box" id="phFeedback"></div>
+      <button class="btn-primary btn-next" id="phNextBtn">Histoire suivante ➜</button>
+    </section>
+
+    <!-- ============ BADGES ============ -->
+    <section id="screen-badges" class="screen">
+      <h2 class="section-h">🏆 Mes badges</h2>
+      <p class="section-sub">Continue à jouer pour tous les débloquer !</p>
+      <div class="badges-grid" id="badgesGrid"></div>
+    </section>
+
+    <!-- ============ SUIVI / PROGRÈS ============ -->
+    <section id="screen-stats" class="screen">
+      <h2 class="section-h">📅 Mon suivi</h2>
+
+      <div class="week-strip" id="weekStrip"></div>
+
+      <div class="stats-grid" id="statsGrid"></div>
+
+      <h3 class="subsection-h">🏝️ Progression par île</h3>
+      <div class="island-progress-list" id="islandProgressList"></div>
+
+      <div class="data-actions">
+        <button class="btn-secondary" id="exportBtn">⬇️ Exporter ma progression</button>
+        <button class="btn-secondary" id="importBtn">⬆️ Importer une progression</button>
+        <input type="file" id="importFile" accept=".json" style="display:none;">
+      </div>
+      <p class="data-hint">Ce jeu fonctionne sans connexion : la progression reste sur cet appareil. Pour la retrouver sur un autre ordinateur ou téléphone, exporte-la puis importe le fichier sur l'autre appareil.</p>
+    </section>
+
+    <!-- ============ GUIDE PARENTS ============ -->
+    <section id="screen-parents" class="screen">
+      <h2 class="section-h">💡 Guide pour les parents</h2>
+      <div id="parentsContent"></div>
+    </section>
+
+  </main>
+
+  <!-- ============ NAVIGATION BASSE ============ -->
+  <nav class="bottombar">
+    <button class="nav-btn active" data-screen="map"><span class="nav-icon">🗺️</span><span>Carte</span></button>
+    <button class="nav-btn" data-screen="badges"><span class="nav-icon">🏆</span><span>Badges</span></button>
+    <button class="nav-btn" data-screen="stats"><span class="nav-icon">📅</span><span>Suivi</span></button>
+    <button class="nav-btn" data-screen="parents"><span class="nav-icon">💡</span><span>Parents</span></button>
+  </nav>
+</div>
+
+<!-- ============ MODALE MINUTEUR MAGIQUE ============ -->
+<div id="focusTimerModal" class="modal-overlay">
+  <div class="modal-card focus-modal">
+    <button class="modal-close" id="closeFocusTimer">✕</button>
+    <div class="focus-modal-emoji" id="focusEmoji">🌙</div>
+    <div class="focus-modal-timer" id="focusModalTimer">05:00</div>
+    <p class="focus-modal-text" id="focusModalText">Respire calmement, concentre-toi sur ta tâche…</p>
+    <div class="focus-modal-buttons">
+      <button class="btn-primary" id="focusStartBtn">▶ Démarrer 5 min</button>
+      <button class="btn-secondary" id="focusResetBtn">🔄 Réinitialiser</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODALE CÉLÉBRATION (badge / niveau) ============ -->
+<div id="celebrationModal" class="modal-overlay">
+  <div class="modal-card celebration-modal">
+    <div class="celebration-emoji" id="celebEmoji">🎉</div>
+    <div class="celebration-title" id="celebTitle">Bravo !</div>
+    <p class="celebration-text" id="celebText"></p>
+    <button class="btn-primary" id="celebCloseBtn">Continuer l'aventure</button>
+  </div>
+</div>
+
+<canvas id="confettiCanvas"></canvas>
+
+<script src="js/data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/speech.js"></script>
+<script src="js/adaptive.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
