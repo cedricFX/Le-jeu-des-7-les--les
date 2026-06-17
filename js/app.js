@@ -611,6 +611,62 @@ document.getElementById("importFile").addEventListener("change", async (e) => {
 });
 
 /* ----------------------------------------------------------
+   SAUVEGARDE EN LIGNE (Google Sheets via Apps Script)
+---------------------------------------------------------- */
+function setCloudStatus(message, isError) {
+  const el = document.getElementById("cloudStatus");
+  if (!el) return;
+  el.textContent = message;
+  el.classList.toggle("error", !!isError);
+}
+
+const cloudUrlInput = document.getElementById("cloudUrlInput");
+if (cloudUrlInput) cloudUrlInput.value = CloudSync.getUrl();
+
+document.getElementById("cloudSaveUrlBtn").addEventListener("click", () => {
+  CloudSync.setUrl(cloudUrlInput.value);
+  setCloudStatus(cloudUrlInput.value ? "Adresse enregistrée ✓" : "Adresse effacée.");
+});
+
+document.getElementById("cloudSaveBtn").addEventListener("click", async () => {
+  if (!CloudSync.hasUrl()) {
+    setCloudStatus("Colle d'abord l'adresse de ton script (voir GOOGLE_SHEETS_SETUP.md).", true);
+    return;
+  }
+  setCloudStatus("Sauvegarde en cours…");
+  try {
+    await CloudSync.save(state.playerName, state);
+    setCloudStatus(`Progression de ${state.playerName} sauvegardée en ligne ✓`);
+  } catch (err) {
+    setCloudStatus("Échec de la sauvegarde en ligne. Vérifie l'adresse et ta connexion.", true);
+  }
+});
+
+document.getElementById("cloudLoadBtn").addEventListener("click", async () => {
+  if (!CloudSync.hasUrl()) {
+    setCloudStatus("Colle d'abord l'adresse de ton script (voir GOOGLE_SHEETS_SETUP.md).", true);
+    return;
+  }
+  const name = state.playerName || document.getElementById("nameInput").value;
+  if (!name) {
+    setCloudStatus("Indique d'abord le prénom du capitaine.", true);
+    return;
+  }
+  setCloudStatus("Chargement en cours…");
+  try {
+    const cloudState = await CloudSync.load(name);
+    state = cloudState;
+    Storage.save(state);
+    updateTopbar();
+    showScreen("map");
+    setCloudStatus(`Progression de ${name} récupérée ✓`);
+    triggerCelebration("☁️", "Progression récupérée !", "Te revoilà capitaine, prêt à continuer l'aventure !");
+  } catch (err) {
+    setCloudStatus("Aucune sauvegarde trouvée en ligne pour ce prénom.", true);
+  }
+});
+
+/* ----------------------------------------------------------
    GUIDE PARENTS
 ---------------------------------------------------------- */
 function renderParents() {
