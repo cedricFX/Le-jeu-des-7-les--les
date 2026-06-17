@@ -639,6 +639,22 @@ input { font-family: inherit; }
 .data-actions { display: flex; gap: 10px; margin: 20px 0 10px; flex-wrap: wrap; }
 .data-hint { font-size: 0.78rem; color: rgba(251,243,219,0.7); line-height: 1.4; }
 
+.cloud-config-row { display: flex; gap: 8px; margin: 12px 0; }
+.cloud-config-row input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(251,243,219,0.25);
+  background: rgba(255,255,255,0.08);
+  color: var(--parchment);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+}
+.cloud-config-row input::placeholder { color: rgba(251,243,219,0.45); }
+.cloud-status { font-size: 0.8rem; min-height: 1.2em; margin-top: 4px; color: var(--gold); }
+.cloud-status.error { color: var(--coral); }
+
 /* ============================================================
    GUIDE PARENTS
    ============================================================ */
