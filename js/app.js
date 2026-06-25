@@ -8,7 +8,7 @@
 let state = Storage.load();
 let saveTimer = null;
 
-const AVATARS = ["🦊","🐯","🦁","🐼","🐸","🦄","🐙","🦅","🐳","🐲"];
+const AVATARS = ["🍄","⭐","🐢","👾","🌸","🦕","🔥","🌟","🐉","🏆"];
 
 // Nombre d'éléments (questions / histoires) par visite d'une île, avant
 // de proposer de retourner à la carte. Évite les sessions sans fin.
@@ -106,10 +106,10 @@ function updateTopbar() {
    CARTE DE L'ARCHIPEL
 ---------------------------------------------------------- */
 const GREETINGS = [
-  "Quelle île veux-tu explorer aujourd'hui ?",
-  "Ton équipage t'attend, capitaine !",
-  "Chaque île cache un trésor de lecture.",
-  "Prêt pour une nouvelle aventure ?"
+  "Quel monde veux-tu explorer aujourd'hui ?",
+  "En avant ! Le Royaume Champignon t'attend !",
+  "Collecte des étoiles et deviens le champion !",
+  "Prêt pour la prochaine aventure, héros ?"
 ];
 
 function renderMap() {

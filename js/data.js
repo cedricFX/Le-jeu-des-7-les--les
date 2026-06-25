@@ -17,56 +17,56 @@ const GAME_DATA = {
   islands: [
     {
       id: "syllabes",
-      name: "Île des Syllabes",
-      emoji: "🏝️",
+      name: "Monde 1 — Plaine des Syllabes",
+      emoji: "🍄",
       color: "#3FB8AF",
       desc: "Démêle les syllabes qui se ressemblent",
       unlockStars: 0
     },
     {
       id: "motsSages",
-      name: "Forteresse des Mots Sages",
-      emoji: "🏯",
+      name: "Monde 2 — Château des Mots Sages",
+      emoji: "🏰",
       color: "#FF8C42",
       desc: "Lis les mots qui suivent les règles",
       unlockStars: 4
     },
     {
       id: "motsRebelles",
-      name: "Grotte des Mots Rebelles",
-      emoji: "🐉",
+      name: "Monde 3 — Grotte des Mots Rebelles",
+      emoji: "👾",
       color: "#9B5DE5",
       desc: "Apprivoise les mots qui ne s'écrivent pas comme ils se disent",
       unlockStars: 8
     },
     {
       id: "sonsJumeaux",
-      name: "Vallée des Sons Jumeaux",
-      emoji: "🎭",
+      name: "Monde 4 — Vallée des Sons Jumeaux",
+      emoji: "⭐",
       color: "#F94144",
       desc: "Distingue les sons qui se confondent",
       unlockStars: 12
     },
     {
       id: "atelier",
-      name: "Atelier d'Écriture",
-      emoji: "✍️",
+      name: "Monde 5 — Atelier de Luigi",
+      emoji: "✏️",
       color: "#43AA8B",
       desc: "Écris les mots sans en oublier un bout",
       unlockStars: 16
     },
     {
       id: "concentration",
-      name: "Tour de la Concentration",
-      emoji: "🦉",
+      name: "Monde 6 — Tour de Bowser",
+      emoji: "🐢",
       color: "#577590",
       desc: "Aiguise ton attention et ton regard",
       unlockStars: 20
     },
     {
       id: "phare",
-      name: "Phare des Histoires",
-      emoji: "📖",
+      name: "Monde 7 — La Bibliothèque Étoilée",
+      emoji: "🌟",
       color: "#F3722C",
       desc: "Lis des histoires à voix haute, à ton rythme",
       unlockStars: 24
