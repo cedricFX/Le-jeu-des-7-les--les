@@ -148,7 +148,7 @@ function openIsland(islandId) {
   if (islandId === "atelier") return startAtelier();
   if (islandId === "concentration") return startConcentration();
   if (islandId === "phare") return startPhare();
-  return startExercise(islandId);
+  return startExercise(islandId); // syllabes, motsSages, motsRebelles, sonsJumeaux, bdp
 }
 
 /* ----------------------------------------------------------
@@ -567,15 +567,16 @@ function checkBadges() {
   const allLevel3 = Object.values(state.islandProgress).every(p => p.level === 3);
 
   const conditions = {
-    premier_pas: state.totalAttempts >= 1,
-    serie_5: state.bestStreak >= 5,
-    explorateur: GAME_DATA.islands.every(i => state.islandsVisited.includes(i.id)),
-    syllabes_maitre: state.islandProgress.syllabes.level === 3,
-    lecteur: totalTextsCompleted >= 5,
-    orthographe_pro: state.islandProgress.atelier.level === 3,
-    oeil_de_lynx: (state.oddFoundCount || 0) >= 10,
-    capitaine: state.stars >= 30,
-    legende: allLevel3
+    premier_pas:    state.totalAttempts >= 1,
+    serie_5:        state.bestStreak >= 5,
+    explorateur:    GAME_DATA.islands.every(i => state.islandsVisited.includes(i.id)),
+    syllabes_maitre:state.islandProgress.syllabes.level === 3,
+    lecteur:        totalTextsCompleted >= 5,
+    orthographe_pro:state.islandProgress.atelier.level === 3,
+    oeil_de_lynx:   (state.oddFoundCount || 0) >= 10,
+    champion_bdp:   (state.islandProgress.bdp || {}).level === 3,
+    capitaine:      state.stars >= 50,
+    legende:        allLevel3
   };
 
   GAME_DATA.badges.forEach(b => {

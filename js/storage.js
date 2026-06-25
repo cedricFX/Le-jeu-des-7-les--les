@@ -11,7 +11,7 @@ const STORAGE_KEY = "lectureAventure_v1";
 
 const defaultState = () => ({
   playerName: "",
-  avatar: "🦊",
+  avatar: "🍄",
   stars: 0,
   totalCorrect: 0,
   totalAttempts: 0,
@@ -25,10 +25,11 @@ const defaultState = () => ({
     sonsJumeaux:   { level: 1, history: [] },
     atelier:       { level: 1, history: [] },
     concentration: { level: 1, history: [] },
-    phare:         { level: 1, history: [], textsCompleted: 0 }
+    phare:         { level: 1, history: [], textsCompleted: 0 },
+    bdp:           { level: 1, history: [] }
   },
   earnedBadges: [],
-  daysActive: {},      // { "2026-06-17": true, ... }
+  daysActive: {},
   lastPlayed: null
 });
 
