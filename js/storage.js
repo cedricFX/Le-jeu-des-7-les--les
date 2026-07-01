@@ -26,7 +26,17 @@ const defaultState = () => ({
     atelier:       { level: 1, history: [] },
     concentration: { level: 1, history: [] },
     phare:         { level: 1, history: [], textsCompleted: 0 },
-    bdp:           { level: 1, history: [] }
+    bdp:           { level: 1, history: [] },
+    rimes:         { level: 1, history: [] },
+    sonsCache:     { level: 1, history: [] },
+    cgSons:        { level: 1, history: [] },
+    doubles:       { level: 1, history: [] },
+    accents:       { level: 1, history: [] },
+    nasaux:        { level: 1, history: [] },
+    finales:       { level: 1, history: [] },
+    motsLongs:     { level: 1, history: [] },
+    familles:      { level: 1, history: [] },
+    champion:      { level: 1, history: [] }
   },
   earnedBadges: [],
   daysActive: {},

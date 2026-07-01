@@ -575,7 +575,9 @@ function checkBadges() {
     orthographe_pro:state.islandProgress.atelier.level === 3,
     oeil_de_lynx:   (state.oddFoundCount || 0) >= 10,
     champion_bdp:   (state.islandProgress.bdp || {}).level === 3,
-    capitaine:      state.stars >= 50,
+    roi_des_rimes:  (state.islandProgress.rimes || {}).level === 3,
+    grand_champion: (state.islandProgress.champion || {}).level === 3,
+    capitaine:      state.stars >= 70,
     legende:        allLevel3
   };
 
